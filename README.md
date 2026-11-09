@@ -23,7 +23,7 @@ emails, phone numbers and the original files are never shown publicly.
 - **Categorise**: one abstract at a time, filed with one tap. Suggestions come from category keywords and the author's stated sub-theme. Keys: `1`–`9` choose a category, `Enter` accepts the suggestion, `S` skips, `H` hides, `Z` undoes
 - **Abstracts**: search, filter, change categories inline, bulk move, hide or delete, and edit any field. The editor checks word and keyword limits against the guidelines
 - **Categories**: add, edit, recolour, reorder and delete categories, or start from a 12-category starter set
-- **Import**: upload PDF, Word (.docx) or text files, or import straight from a Google Drive folder. Title, authors, institution, email, keywords, sub-theme and text are extracted automatically, and duplicates are skipped
+- **Import**: upload PDF, Word (.doc or .docx) or text files, or import straight from a Google Drive folder. Title, authors, institution, email, keywords, sub-theme and text are extracted automatically, and duplicates are skipped
 - **Settings**: site and event details and submission guidelines
 - **Export CSV**: every abstract with its category, for Excel or Google Sheets
 

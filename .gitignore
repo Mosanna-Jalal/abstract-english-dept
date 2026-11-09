@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Abstract files downloaded from Google Drive (they contain contact details)
+/drive-files/

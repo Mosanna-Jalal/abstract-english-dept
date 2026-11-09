@@ -256,6 +256,8 @@ export async function getAbstractPage(serial: number): Promise<AbstractPage | nu
 
 export interface BookSection {
   category: CategoryDTO;
+  /** Position of the category in the full list (its sub-theme number). */
+  number: number;
   items: AbstractDetailDTO[];
 }
 
@@ -270,8 +272,9 @@ export async function getBook(): Promise<BookSection[]> {
   ]);
   const map = refMap(cats);
   return cats
-    .map((category) => ({
+    .map((category, index) => ({
       category,
+      number: index + 1,
       items: docs
         .filter((d) => d.categoryId?.toHexString() === category.id)
         .map((d) => ({ ...toCard(d, map), body: d.body ?? "", createdAt: (d.createdAt ?? new Date(0)).toISOString() })),

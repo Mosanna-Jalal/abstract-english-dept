@@ -25,7 +25,9 @@ export async function GET(_request: Request, ctx: RouteContext<"/admin/files/[id
       ? "application/pdf"
       : ext === "docx"
         ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        : ext === "txt" || ext === "md"
+        : ext === "doc"
+          ? "application/msword"
+          : ext === "txt" || ext === "md"
           ? "text/plain; charset=utf-8"
           : "application/octet-stream";
   const disposition = ext === "pdf" || ext === "txt" || ext === "md" ? "inline" : "attachment";

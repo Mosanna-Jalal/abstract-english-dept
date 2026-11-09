@@ -69,10 +69,10 @@ export default async function BookPage() {
           <nav aria-label="Contents" className="container-page mt-14 max-w-3xl print-break-before">
             <p className="eyebrow">Contents</p>
             <ol className="mt-6 space-y-8">
-              {sections.map((sec, i) => (
+              {sections.map((sec) => (
                 <li key={sec.category.id}>
                   <a href={`#c-${sec.category.slug}`} className="group flex items-baseline gap-3">
-                    <span className="w-8 flex-none font-serif italic text-gold">{toRoman(i + 1)}.</span>
+                    <span className="w-8 flex-none font-serif italic text-gold">{toRoman(sec.number)}.</span>
                     <span className="font-serif text-xl tracking-tight group-hover:text-accent">{sec.category.name}</span>
                     <span className="flex-1 translate-y-[-4px] border-b border-dotted border-line-strong" aria-hidden />
                     <span className="text-sm text-ink-3">{sec.items.length}</span>
@@ -96,10 +96,10 @@ export default async function BookPage() {
           </nav>
 
           {/* Sections */}
-          {sections.map((sec, i) => (
+          {sections.map((sec) => (
             <section key={sec.category.id} id={`c-${sec.category.slug}`} className="container-page mt-24 max-w-3xl print-break-before print:mt-0">
               <header className="border-b border-line pb-8 text-center">
-                <p className="font-serif text-lg italic text-gold">{toRoman(i + 1)}</p>
+                <p className="font-serif text-lg italic text-gold">{toRoman(sec.number)}</p>
                 <h2 className="mt-2 font-serif text-[2.1rem] font-light leading-tight tracking-tight sm:text-[2.6rem]">
                   {sec.category.name}
                 </h2>

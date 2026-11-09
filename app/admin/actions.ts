@@ -464,8 +464,8 @@ export async function scanDriveAction(folderInput: string): Promise<ActionResult
           const serial = importedMap.get(f.id) ?? null;
           if (serial) return { ...f, status: "imported" as const, reason: `Imported as No. ${serial}`, serial };
           const kind = isGoogleDoc(f.mimeType) ? "text" : detectKind(f.name, f.mimeType);
-          if (kind === "unsupported" || kind === "doc") {
-            return { ...f, status: "skipped" as const, reason: kind === "doc" ? "Old .doc format" : "Not a PDF, Word or text file", serial };
+          if (kind === "unsupported") {
+            return { ...f, status: "skipped" as const, reason: "Not a PDF, Word or text file", serial };
           }
           if (NOT_AN_ABSTRACT.test(f.name)) return { ...f, status: "skipped" as const, reason: "Looks like a brochure or notice", serial };
           if (f.size > MAX_FILE_BYTES) return { ...f, status: "skipped" as const, reason: "Larger than 10 MB", serial };

@@ -101,7 +101,8 @@ async function Hero() {
 }
 
 async function Categories() {
-  const categories = (await getCategories()).filter((c) => c.count > 0);
+  const all = await getCategories();
+  const categories = all.filter((c) => c.count > 0);
   if (!categories.length) {
     return (
       <EmptyState title="The collection is being catalogued">
@@ -112,7 +113,7 @@ async function Categories() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {categories.map((c, i) => (
-        <CategoryCard key={c.id} category={c} index={i} />
+        <CategoryCard key={c.id} category={c} index={i} number={all.indexOf(c) + 1} />
       ))}
     </div>
   );

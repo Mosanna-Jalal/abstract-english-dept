@@ -11,9 +11,10 @@ export const metadata: Metadata = {
 };
 
 function range(min: number, max: number, unit: string) {
+  const one = (n: number) => (n === 1 ? unit.replace(/s$/, "") : unit);
   if (min && max) return `${min}–${max} ${unit}`;
-  if (max) return `Up to ${max} ${unit}`;
-  return `At least ${min} ${unit}`;
+  if (max) return `Up to ${max} ${one(max)}`;
+  return `At least ${min} ${one(min)}`;
 }
 
 export default async function GuidelinesPage() {

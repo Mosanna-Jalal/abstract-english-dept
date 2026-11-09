@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     proxyClientMaxBodySize: "12mb",
   },
   // Parsers run on the server only; load them from node_modules as-is.
-  serverExternalPackages: ["unpdf", "mammoth"],
+  serverExternalPackages: ["unpdf", "mammoth", "word-extractor"],
   cacheComponents: true,
   partialPrefetching: true,
   poweredByHeader: false,

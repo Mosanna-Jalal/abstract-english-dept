@@ -5,7 +5,7 @@ export class ExtractError extends Error {}
 export type FileKind = "pdf" | "docx" | "text" | "doc" | "unsupported";
 
 export const ACCEPT_ATTR =
-  ".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
+  ".pdf,.doc,.docx,.txt,.md,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
 
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
@@ -14,6 +14,9 @@ export function detectKind(fileName: string, mimeType: string, head?: Uint8Array
   const mime = (mimeType || "").toLowerCase();
   const startsWith = (sig: string) => !!head && sig.split("").every((ch, i) => head[i] === ch.charCodeAt(0));
   if (startsWith("%PDF") || mime === "application/pdf" || name.endsWith(".pdf")) return "pdf";
+  // Trust the bytes first: Word files are often renamed (".docx .doc").
+  if (head && startsWith("PK") && /\.docx?\b/.test(name)) return "docx";
+  if (head && startsWith("ÐÏ\u0011à")) return "doc";
   if (
     mime === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     (name.endsWith(".docx") && (!head || startsWith("PK")))
@@ -62,7 +65,15 @@ export async function extractText(
   }
 
   if (kind === "doc") {
-    throw new ExtractError("Old Word (.doc) files can’t be read. Save it as .docx or PDF and upload it again.");
+    // Legacy Word 97–2003 files.
+    const mod = await import("word-extractor");
+    const WordExtractor = mod.default ?? (mod as unknown as typeof mod.default);
+    try {
+      const doc = await new WordExtractor().extract(Buffer.from(data));
+      return { text: doc.getBody(), kind };
+    } catch {
+      throw new ExtractError("This old Word (.doc) file could not be read. Save it as .docx or PDF and upload it again.");
+    }
   }
 
   throw new ExtractError("Unsupported file type. Upload PDF, Word (.docx) or plain-text files.");

@@ -19,7 +19,8 @@ import { importDriveFileAction, importUploadAction, scanDriveAction, type DriveL
 import type { ImportOutcome } from "@/lib/types";
 import { cn, padSerial } from "@/lib/text";
 
-const ACCEPT = ".pdf,.docx,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
+const ACCEPT =
+  ".pdf,.doc,.docx,.txt,.md,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain";
 const MAX_BYTES = 10 * 1024 * 1024;
 
 type RowStatus = "queued" | "working" | "created" | "duplicate" | "error" | "skipped" | "imported";
@@ -149,9 +150,7 @@ function UploadTab() {
       const size = file.size > 1024 * 1024 ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(file.size / 1024))} KB`;
       if (file.size > MAX_BYTES) {
         added.push({ key, name: file.name, detail: size, status: "error", error: "Larger than 10 MB." });
-      } else if (ext === "doc") {
-        added.push({ key, name: file.name, detail: size, status: "error", error: "Old .doc format — save it as .docx or PDF first." });
-      } else if (!["pdf", "docx", "txt", "md"].includes(ext)) {
+      } else if (!["pdf", "doc", "docx", "txt", "md"].includes(ext)) {
         added.push({ key, name: file.name, detail: size, status: "error", error: "Unsupported file type." });
       } else {
         added.push({ key, name: file.name, detail: size, status: "queued" });
@@ -187,7 +186,7 @@ function UploadTab() {
           <span className="hidden sm:inline">Drop abstract files here, or </span>
           <span className="text-accent underline decoration-1 underline-offset-4">choose files</span>
         </span>
-        <span className="mt-2 text-sm text-ink-3">PDF, Word (.docx) or text · up to 10 MB each · select many at once</span>
+        <span className="mt-2 text-sm text-ink-3">PDF, Word (.doc / .docx) or text · up to 10 MB each · select many at once</span>
         <input
           ref={inputRef}
           type="file"
