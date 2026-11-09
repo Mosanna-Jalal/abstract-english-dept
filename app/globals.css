@@ -1,26 +1,550 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Design tokens — warm "paper & ink" in light mode, deep ink in dark mode.
+   --------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  color-scheme: light;
+  --bg: #f6f3ed;
+  --bg-deep: #eee8dd;
+  --surface: #fffdf9;
+  --surface-2: #f2ede4;
+  --surface-3: #e8e1d5;
+  --ink: #17181c;
+  --ink-2: #43464e;
+  --ink-3: #686b73;
+  --line: rgb(23 24 28 / 0.09);
+  --line-strong: rgb(23 24 28 / 0.16);
+  --accent: #7a2533;
+  --accent-hover: #631d29;
+  --accent-ink: #fff8f2;
+  --gold: #94733a;
+  --success: #2f6b46;
+  --warning: #8f6211;
+  --danger: #a32d2d;
+  --glass: rgb(246 243 237 / 0.8);
+  --shadow-sm: 0 1px 2px rgb(40 28 16 / 0.05);
+  --shadow-md: 0 1px 2px rgb(40 28 16 / 0.04), 0 12px 32px -14px rgb(40 28 16 / 0.2);
+  --shadow-lg: 0 2px 6px rgb(40 28 16 / 0.05), 0 32px 64px -24px rgb(40 28 16 / 0.32);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .15 0 0 0 0 .1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    color-scheme: dark;
+    --bg: #0d0e11;
+    --bg-deep: #08090b;
+    --surface: #15171b;
+    --surface-2: #1b1d22;
+    --surface-3: #25282e;
+    --ink: #eeeae2;
+    --ink-2: #bfbab0;
+    --ink-3: #928e86;
+    --line: rgb(238 234 226 / 0.08);
+    --line-strong: rgb(238 234 226 / 0.15);
+    --accent: #e4a3ad;
+    --accent-hover: #efbac2;
+    --accent-ink: #26090f;
+    --gold: #d4b273;
+    --success: #7cc79a;
+    --warning: #e2b55c;
+    --danger: #f08b8b;
+    --glass: rgb(13 14 17 / 0.74);
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-md: 0 1px 2px rgb(0 0 0 / 0.3), 0 14px 34px -14px rgb(0 0 0 / 0.7);
+    --shadow-lg: 0 2px 6px rgb(0 0 0 / 0.3), 0 32px 64px -24px rgb(0 0 0 / 0.8);
+    --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-deep: var(--bg-deep);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-ink: var(--accent-ink);
+  --color-gold: var(--gold);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, "Times New Roman", serif;
+  --shadow-soft: var(--shadow-md);
+  --shadow-lift: var(--shadow-lg);
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-padding-top: 5.5rem;
+  }
+  body {
+    background-color: var(--bg);
+    background-image: var(--grain);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 24%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+  dialog {
+    color: inherit;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Components
+   --------------------------------------------------------------------------- */
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 74rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) {
+    .container-page {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-hover {
+    transition:
+      transform 0.4s var(--ease),
+      box-shadow 0.4s var(--ease),
+      border-color 0.4s var(--ease);
+  }
+  @media (hover: hover) {
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--line-strong);
+    }
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.75rem;
+    padding-inline: 1.125rem;
+    border-radius: 999px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    white-space: nowrap;
+    user-select: none;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s,
+      box-shadow 0.2s,
+      opacity 0.2s,
+      transform 0.15s;
+  }
+  .btn:active {
+    transform: scale(0.98);
+  }
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--bg);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-primary:hover {
+    background: color-mix(in oklab, var(--ink) 84%, var(--bg));
+  }
+  .btn-accent {
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-accent:hover {
+    background: var(--accent-hover);
+  }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-secondary:hover {
+    border-color: color-mix(in oklab, var(--ink) 30%, transparent);
+  }
+  .btn-ghost {
+    color: var(--ink-2);
+  }
+  .btn-ghost:hover {
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+  .btn-danger {
+    color: var(--danger);
+    background: color-mix(in oklab, var(--danger) 9%, transparent);
+  }
+  .btn-danger:hover {
+    background: color-mix(in oklab, var(--danger) 15%, transparent);
+  }
+  .btn-sm {
+    height: 2.25rem;
+    padding-inline: 0.875rem;
+    font-size: 0.875rem;
+  }
+  .btn-icon {
+    width: 2.75rem;
+    padding-inline: 0;
+  }
+  .btn-sm.btn-icon {
+    width: 2.25rem;
+  }
+
+  /* Form fields — 16px text stops iOS from zooming on focus. */
+  .field {
+    width: 100%;
+    border-radius: 0.875rem;
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    padding: 0.7rem 0.95rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--ink);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .field::placeholder {
+    color: var(--ink-3);
+  }
+  .field:focus {
+    outline: none;
+    border-color: color-mix(in oklab, var(--accent) 60%, var(--line-strong));
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 14%, transparent);
+  }
+  select.field {
+    appearance: none;
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23888' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+  }
+  .label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    margin-bottom: 0.4rem;
+  }
+  .hint {
+    font-size: 0.8125rem;
+    color: var(--ink-3);
+  }
+
+  /* Category tone: set --c inline (see lib/colors.ts). */
+  .tone {
+    --tone-fg: color-mix(in oklab, var(--c) 72%, var(--ink));
+    --tone-bg: color-mix(in oklab, var(--c) 11%, transparent);
+    --tone-line: color-mix(in oklab, var(--c) 26%, transparent);
+    --tone-solid: var(--c);
+  }
+  @media (prefers-color-scheme: dark) {
+    .tone {
+      --tone-fg: color-mix(in oklab, var(--c) 50%, white);
+      --tone-bg: color-mix(in oklab, var(--c) 22%, transparent);
+      --tone-line: color-mix(in oklab, var(--c) 46%, transparent);
+      --tone-solid: color-mix(in oklab, var(--c) 72%, white);
+    }
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 1.75rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--tone-fg);
+    background: var(--tone-bg);
+    box-shadow: inset 0 0 0 1px var(--tone-line);
+  }
+  .dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    border-radius: 999px;
+    background: var(--tone-solid);
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.6rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: var(--ink-2);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+  }
+
+  /* Horizontal chip rows that scroll on phones with soft edges. */
+  .scroll-row {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 28px), transparent);
+  }
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
+  .scroll-row > * {
+    scroll-snap-align: start;
+    flex: none;
+  }
+
+  /* Reading typography for abstracts. */
+  .prose-abstract p {
+    font-family: var(--font-serif);
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--ink);
+    margin-bottom: 1.15em;
+    hyphens: auto;
+  }
+  @media (min-width: 768px) {
+    .prose-abstract p {
+      font-size: 1.1875rem;
+    }
+  }
+  .prose-abstract.drop-cap p:first-of-type::first-letter {
+    float: left;
+    font-size: 3.7em;
+    line-height: 0.8;
+    padding: 0.1em 0.12em 0 0;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .skeleton {
+    background: linear-gradient(100deg, var(--surface-2) 30%, var(--surface-3) 50%, var(--surface-2) 70%);
+    background-size: 300% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+    border-radius: 0.5rem;
+  }
+
+  .hero-glow {
+    background:
+      radial-gradient(60% 55% at 15% 0%, color-mix(in oklab, var(--accent) 15%, transparent), transparent 70%),
+      radial-gradient(45% 45% at 95% 5%, color-mix(in oklab, var(--gold) 20%, transparent), transparent 70%);
+  }
+  .ruled {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 35px,
+      var(--line) 35px,
+      var(--line) 36px
+    );
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 90%);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    background: var(--ink);
+    color: var(--bg);
+    font-weight: 600;
+  }
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Utilities & motion
+   --------------------------------------------------------------------------- */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@utility pb-nav {
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+@utility glass {
+  background: var(--glass);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  backdrop-filter: saturate(160%) blur(18px);
+}
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@utility animate-rise {
+  animation: rise 0.7s var(--ease) both;
+}
+@utility animate-fade {
+  animation: fade-in 0.5s var(--ease) both;
+}
+@utility animate-card {
+  animation: card-in 0.45s var(--ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Print (Book of Abstracts → "Save as PDF")
+   --------------------------------------------------------------------------- */
+@media print {
+  @page {
+    margin: 18mm 16mm;
+  }
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --ink: #000;
+    --ink-2: #222;
+    --ink-3: #444;
+    --accent: #6b1f2b;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  body {
+    background-image: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-break-before {
+    break-before: page;
+  }
+  .print-avoid-break {
+    break-inside: avoid;
+  }
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+  .card {
+    box-shadow: none !important;
+    border-color: #ddd !important;
+  }
 }
