@@ -757,6 +757,13 @@
 .leaf[data-turned="true"] {
   transform: rotateY(-180deg);
 }
+/* A page lying open shows only its front, so it needn't be 3D. Flattening it
+   lets touch scrolling reach the text on it: inside a 3D leaf, phones scroll
+   the whole web page instead. Leaves become 3D again while they turn, and
+   turned leaves stay 3D so that their backs show. */
+.leaf:not([data-turned="true"]):not([data-moving="true"]) {
+  transform-style: flat;
+}
 
 .face {
   position: absolute;
