@@ -9,6 +9,7 @@ import {
   moveCategoryAction,
   saveCategoryAction,
 } from "@/app/admin/actions";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { CATEGORY_COLORS, COLOR_KEYS, toneStyle } from "@/lib/colors";
 import { cn } from "@/lib/text";
 import type { CategoryDTO, ColorKey } from "@/lib/types";
@@ -205,7 +206,7 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
               ) : (
                 <div className="flex items-center gap-3 sm:gap-4">
                   <span className="tone flex size-10 flex-none items-center justify-center rounded-xl bg-[var(--tone-bg)]" style={toneStyle(c.color)}>
-                    <span className="size-3 rounded-full bg-[var(--tone-solid)]" />
+                    <CategoryIcon category={c} className="size-5 text-[var(--tone-fg)]" strokeWidth={1.8} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium">{c.name}</p>

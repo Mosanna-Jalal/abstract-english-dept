@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/text";
-import { SITE_NAV, isActive } from "./nav-items";
+import { SITE_NAV, isActive, turnTowards } from "./nav-items";
 
 // `usePathname` suspends on dynamic routes under Cache Components, so these
 // are rendered inside <Suspense> with the `*View pathname={null}` versions
@@ -16,19 +16,21 @@ export function DesktopNav() {
 export function DesktopNavView({ pathname }: { pathname: string | null }) {
   return (
     <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
-      {SITE_NAV.map((item) => {
-        const on = isActive(item.href, pathname);
+      {SITE_NAV.map(({ href, label, icon: Icon }) => {
+        const on = isActive(href, pathname);
         return (
           <Link
-            key={item.href}
-            href={item.href}
+            key={href}
+            href={href}
+            transitionTypes={turnTowards(href, pathname)}
             aria-current={on ? "page" : undefined}
             className={cn(
-              "relative rounded-full px-3.5 py-2 text-[0.9rem] font-medium transition-colors",
+              "relative inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-[0.9rem] font-medium transition-colors",
               on ? "bg-surface-2 text-ink" : "text-ink-2 hover:bg-surface-2/70 hover:text-ink",
             )}
           >
-            {item.label}
+            <Icon className={cn("size-4", on ? "text-accent" : "text-ink-3")} strokeWidth={on ? 2.1 : 1.8} aria-hidden />
+            {label}
           </Link>
         );
       })}
@@ -37,14 +39,14 @@ export function DesktopNavView({ pathname }: { pathname: string | null }) {
 }
 
 export function BottomNav() {
-  const pathname = usePathname();
-  return <BottomNavView pathname={pathname} />;
+  return <BottomNavView pathname={usePathname()} />;
 }
 
 export function BottomNavView({ pathname }: { pathname: string | null }) {
   return (
     <nav
       aria-label="Main"
+      style={{ viewTransitionName: "site-tabbar" }}
       className="glass fixed inset-x-0 bottom-0 z-40 border-t border-line pb-safe md:hidden no-print"
     >
       <ul className="mx-auto grid max-w-md grid-cols-5 px-2">
@@ -54,6 +56,7 @@ export function BottomNavView({ pathname }: { pathname: string | null }) {
             <li key={href}>
               <Link
                 href={href}
+                transitionTypes={turnTowards(href, pathname)}
                 aria-current={on ? "page" : undefined}
                 className={cn(
                   "flex h-16 flex-col items-center justify-center gap-1 text-[0.68rem] font-medium tracking-wide transition-colors",

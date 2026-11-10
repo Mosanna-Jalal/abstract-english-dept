@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/text";
+import { TURN_BACK, TURN_FORWARD } from "@/lib/turn";
 
 /** A thin rule with a small gold lozenge in the middle. */
 export function Ornament({ className }: { className?: string }) {
@@ -20,15 +21,20 @@ export function SectionHeading({
   eyebrow,
   title,
   action,
+  icon,
 }: {
   eyebrow: string;
   title: string;
   action?: React.ReactNode;
+  icon?: React.ReactNode;
 }) {
   return (
     <div className="mb-6 flex items-end justify-between gap-4 sm:mb-8">
       <div>
-        <p className="eyebrow">{eyebrow}</p>
+        <p className="eyebrow inline-flex items-center gap-1.5">
+          {icon && <span className="text-gold [&>svg]:size-3.5">{icon}</span>}
+          {eyebrow}
+        </p>
         <h2 className="mt-2 font-serif text-[1.85rem] font-normal leading-tight tracking-tight sm:text-[2.25rem]">{title}</h2>
       </div>
       {action}
@@ -40,16 +46,21 @@ export function PageIntro({
   eyebrow,
   title,
   children,
+  icon,
 }: {
   eyebrow: string;
   title: React.ReactNode;
   children?: React.ReactNode;
+  icon?: React.ReactNode;
 }) {
   return (
     <div className="relative overflow-hidden border-b border-line">
       <div aria-hidden className="hero-glow absolute inset-0 opacity-80" />
       <div className="container-page relative pb-10 pt-10 sm:pb-14 sm:pt-16">
-        <p className="eyebrow animate-rise">{eyebrow}</p>
+        <p className="eyebrow inline-flex items-center gap-1.5 animate-rise">
+          {icon && <span className="text-gold [&>svg]:size-3.5">{icon}</span>}
+          {eyebrow}
+        </p>
         <h1
           className="mt-3 max-w-3xl font-serif text-[2.35rem] font-light leading-[1.05] tracking-tight animate-rise sm:text-[3.4rem]"
           style={{ animationDelay: "60ms" }}
@@ -99,6 +110,7 @@ export function Pagination({
     <nav aria-label="Pagination" className="mt-10 flex items-center justify-center gap-2">
       <Link
         href={href(page - 1)}
+        transitionTypes={TURN_BACK}
         aria-disabled={page <= 1}
         tabIndex={page <= 1 ? -1 : undefined}
         className={cn("btn btn-secondary btn-sm", page <= 1 && "pointer-events-none opacity-40")}
@@ -110,6 +122,7 @@ export function Pagination({
       </span>
       <Link
         href={href(page + 1)}
+        transitionTypes={TURN_FORWARD}
         aria-disabled={page >= pages}
         tabIndex={page >= pages ? -1 : undefined}
         className={cn("btn btn-secondary btn-sm", page >= pages && "pointer-events-none opacity-40")}

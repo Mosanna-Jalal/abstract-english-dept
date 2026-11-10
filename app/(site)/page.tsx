@@ -1,10 +1,12 @@
 import Form from "next/form";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Calendar, MapPin, ScrollText, Search } from "lucide-react";
+import { ArrowRight, BookOpenText, Calendar, Feather, MapPin, NotebookTabs, Quote, ScrollText, Search } from "lucide-react";
 import { AbstractCard } from "@/components/site/abstract-card";
 import { EmptyState, Ornament, SectionHeading } from "@/components/site/bits";
-import { CategoryCard } from "@/components/site/category-card";
+import { Bookshelf } from "@/components/site/bookshelf";
+import { PageSheet } from "@/components/site/page-sheet";
 import { getCategories, getRecentAbstracts, getSettings, getStats } from "@/lib/queries";
+import { TURN_FORWARD } from "@/lib/turn";
 
 function EditorialTitle({ text }: { text: string }) {
   const words = text.trim().split(/\s+/);
@@ -110,13 +112,7 @@ async function Categories() {
       </EmptyState>
     );
   }
-  return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {categories.map((c, i) => (
-        <CategoryCard key={c.id} category={c} index={i} number={all.indexOf(c) + 1} />
-      ))}
-    </div>
-  );
+  return <Bookshelf categories={categories} all={all} />;
 }
 
 async function Recent() {
@@ -126,9 +122,10 @@ async function Recent() {
     <section className="container-page mt-20 sm:mt-24">
       <SectionHeading
         eyebrow="Recently catalogued"
+        icon={<Feather />}
         title="Latest abstracts"
         action={
-          <Link href="/abstracts" className="btn btn-ghost btn-sm hidden sm:inline-flex">
+          <Link transitionTypes={TURN_FORWARD} href="/abstracts" className="btn btn-ghost btn-sm hidden sm:inline-flex">
             Browse all <ArrowRight className="size-4" aria-hidden />
           </Link>
         }
@@ -138,7 +135,7 @@ async function Recent() {
           <AbstractCard key={item.id} item={item} index={i} />
         ))}
       </div>
-      <Link href="/abstracts" className="btn btn-secondary mt-6 w-full sm:hidden">
+      <Link transitionTypes={TURN_FORWARD} href="/abstracts" className="btn btn-secondary mt-6 w-full sm:hidden">
         Browse all abstracts <ArrowRight className="size-4" aria-hidden />
       </Link>
     </section>
@@ -152,16 +149,17 @@ async function About() {
       <div className="card relative overflow-hidden px-6 py-12 sm:px-14 sm:py-16">
         <div aria-hidden className="hero-glow absolute inset-0 opacity-60" />
         <div className="relative mx-auto max-w-3xl text-center">
-          <p className="eyebrow">About the collection</p>
+          <Quote className="mx-auto size-6 text-gold" aria-hidden />
+          <p className="eyebrow mt-3">About the collection</p>
           <p className="mt-5 font-serif text-[1.45rem] font-light leading-snug tracking-tight sm:text-[1.9rem]">
             {s.about}
           </p>
           <Ornament className="mx-auto mt-8 w-48" />
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/book" className="btn btn-primary">
-              <BookOpen className="size-4" aria-hidden /> Read the Book of Abstracts
+            <Link transitionTypes={TURN_FORWARD} href="/book" className="btn btn-primary">
+              <BookOpenText className="size-4" aria-hidden /> Read the Book of Abstracts
             </Link>
-            <Link href="/guidelines" className="btn btn-secondary">
+            <Link transitionTypes={TURN_FORWARD} href="/guidelines" className="btn btn-secondary">
               <ScrollText className="size-4" aria-hidden /> Guidelines
             </Link>
           </div>
@@ -173,14 +171,15 @@ async function About() {
 
 export default function HomePage() {
   return (
-    <>
+    <PageSheet>
       <Hero />
       <section className="container-page mt-14 sm:mt-20">
         <SectionHeading
           eyebrow="Browse by category"
+          icon={<NotebookTabs />}
           title="The collection"
           action={
-            <Link href="/categories" className="btn btn-ghost btn-sm hidden sm:inline-flex">
+            <Link transitionTypes={TURN_FORWARD} href="/categories" className="btn btn-ghost btn-sm hidden sm:inline-flex">
               All categories <ArrowRight className="size-4" aria-hidden />
             </Link>
           }
@@ -189,6 +188,6 @@ export default function HomePage() {
       </section>
       <Recent />
       <About />
-    </>
+    </PageSheet>
   );
 }

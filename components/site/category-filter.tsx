@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { toneStyle } from "@/lib/colors";
 import { cn } from "@/lib/text";
 import type { CategoryDTO } from "@/lib/types";
@@ -58,7 +59,7 @@ export function CategoryFilterView({
               on && "bg-[var(--tone-solid)] text-white shadow-none dark:text-black",
             )}
           >
-            {!on && <span className="dot" aria-hidden />}
+            <CategoryIcon category={c} className="size-3.5 flex-none" strokeWidth={2} />
             {c.name}
             <span className={cn("tabular text-[0.72rem] font-medium", on ? "opacity-80" : "opacity-60")}>{c.count}</span>
           </Link>

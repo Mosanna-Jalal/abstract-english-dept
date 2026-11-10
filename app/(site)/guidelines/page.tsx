@@ -1,14 +1,41 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Calendar, FileText, Hash, MapPin } from "lucide-react";
+import { Calendar, FileText, Hash, MapPin, ScrollText } from "lucide-react";
 import { EmptyState, PageIntro } from "@/components/site/bits";
+import { PageSheet } from "@/components/site/page-sheet";
 import { getSettings } from "@/lib/queries";
 import { guidelineLines } from "@/lib/settings";
+import { TURN_FORWARD } from "@/lib/turn";
 
 export const metadata: Metadata = {
   title: "Guidelines",
   description: "Guidelines for preparing and submitting an abstract.",
 };
+
+const URL_RX = /(https?:\/\/[^\s<>"]*[^\s<>".,;:!?)'"])/g;
+
+/** Text with its web addresses (e.g. the registration form) made into links. */
+function Linkified({ text }: { text: string }) {
+  return (
+    <>
+      {text.split(URL_RX).map((part, i) =>
+        i % 2 === 1 ? (
+          <a
+            key={i}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-accent underline underline-offset-2 hover:text-accent-hover"
+          >
+            {part.replace(/^https?:\/\//, "")}
+          </a>
+        ) : (
+          part
+        ),
+      )}
+    </>
+  );
+}
 
 function range(min: number, max: number, unit: string) {
   const one = (n: number) => (n === 1 ? unit.replace(/s$/, "") : unit);
@@ -36,8 +63,8 @@ export default async function GuidelinesPage() {
   ].filter(Boolean) as Array<{ icon: typeof Calendar; label: string; value: string }>;
 
   return (
-    <>
-      <PageIntro eyebrow={`${s.organizer} · ${s.institution}`} title="Guidelines">
+    <PageSheet>
+      <PageIntro eyebrow={`${s.organizer} · ${s.institution}`} title="Guidelines" icon={<ScrollText />}>
         {s.eventSubtitle || "How to prepare an abstract for the collection."}
       </PageIntro>
 
@@ -65,7 +92,9 @@ export default async function GuidelinesPage() {
               {lines.map((line, i) => (
                 <li key={i} className="flex gap-4">
                   <span className="w-7 flex-none pt-0.5 text-right font-serif text-lg italic leading-none text-gold">{i + 1}</span>
-                  <p className="text-[1.02rem] leading-relaxed text-ink-2">{line}</p>
+                  <p className="min-w-0 text-[1.02rem] leading-relaxed text-ink-2 [overflow-wrap:anywhere]">
+                    <Linkified text={line} />
+                  </p>
                 </li>
               ))}
             </ol>
@@ -74,7 +103,7 @@ export default async function GuidelinesPage() {
           <EmptyState
             title="Guidelines will be published soon"
             action={
-              <Link href="/abstracts" className="btn btn-secondary">
+              <Link href="/abstracts" transitionTypes={TURN_FORWARD} className="btn btn-secondary">
                 Browse abstracts
               </Link>
             }
@@ -83,6 +112,6 @@ export default async function GuidelinesPage() {
           </EmptyState>
         )}
       </div>
-    </>
+    </PageSheet>
   );
 }

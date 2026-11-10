@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Check, Printer, Share2 } from "lucide-react";
 
-export function ShareButton({ title }: { title: string }) {
+export function ShareButton({ title, className = "btn btn-secondary btn-sm" }: { title: string; className?: string }) {
   const [copied, setCopied] = useState(false);
   async function share() {
     const url = window.location.href;
@@ -24,7 +24,7 @@ export function ShareButton({ title }: { title: string }) {
     }
   }
   return (
-    <button type="button" onClick={share} className="btn btn-secondary btn-sm">
+    <button type="button" onClick={share} className={className}>
       {copied ? <Check className="size-4" aria-hidden /> : <Share2 className="size-4" aria-hidden />}
       {copied ? "Link copied" : "Share"}
     </button>

@@ -5,7 +5,10 @@ import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { AbstractCard } from "@/components/site/abstract-card";
 import { CardGridSkeleton, EmptyState, Pagination } from "@/components/site/bits";
+import { PageSheet, TurnRegion } from "@/components/site/page-sheet";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { toneStyle } from "@/lib/colors";
+import { TURN_BACK } from "@/lib/turn";
 import { getCategories, getCategory, searchAbstracts } from "@/lib/queries";
 import { plural, toRoman } from "@/lib/text";
 
@@ -58,10 +61,19 @@ async function CategoryView(props: PageProps<"/categories/[slug]">) {
           className="absolute right-6 top-0 h-20 w-9 bg-[var(--tone-solid)] [clip-path:polygon(0_0,100%_0,100%_100%,50%_80%,0_100%)] sm:right-16 sm:h-28 sm:w-12"
         />
         <div className="container-page relative pb-12 pt-6 sm:pb-16 sm:pt-10">
-          <Link href="/categories" className="inline-flex items-center gap-1.5 text-sm text-ink-3 hover:text-ink">
+          <Link
+            href="/categories"
+            transitionTypes={TURN_BACK}
+            className="inline-flex items-center gap-1.5 text-sm text-ink-3 hover:text-ink"
+          >
             <ArrowLeft className="size-4" aria-hidden /> All categories
           </Link>
-          <p className="mt-10 font-serif text-lg italic text-[var(--tone-fg)]">{toRoman(index + 1)}.</p>
+          <div className="mt-9 flex items-center gap-3">
+            <span className="flex size-12 items-center justify-center rounded-2xl bg-[var(--tone-bg)] text-[var(--tone-fg)] shadow-[inset_0_0_0_1px_var(--tone-line)]">
+              <CategoryIcon category={category} className="size-6" strokeWidth={1.7} />
+            </span>
+            <p className="font-serif text-lg italic text-[var(--tone-fg)]">{toRoman(index + 1)}.</p>
+          </div>
           <h1 className="mt-2 max-w-3xl pr-14 font-serif text-[2.4rem] font-light leading-[1.05] tracking-tight sm:text-[3.6rem]">
             {category.name}
           </h1>
@@ -74,7 +86,7 @@ async function CategoryView(props: PageProps<"/categories/[slug]">) {
 
       <div className="container-page mt-8 sm:mt-10">
         {result.items.length ? (
-          <>
+          <TurnRegion key={result.page}>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {result.items.map((item, i) => (
                 <AbstractCard key={item.id} item={item} index={i} showCategory={false} />
@@ -85,7 +97,7 @@ async function CategoryView(props: PageProps<"/categories/[slug]">) {
               pages={result.pages}
               href={(p) => (p > 1 ? `/categories/${slug}?page=${p}` : `/categories/${slug}`)}
             />
-          </>
+          </TurnRegion>
         ) : (
           <EmptyState title="No abstracts here yet">Abstracts filed under this category will appear here.</EmptyState>
         )}
@@ -96,7 +108,8 @@ async function CategoryView(props: PageProps<"/categories/[slug]">) {
 
 export default function CategoryPage(props: PageProps<"/categories/[slug]">) {
   return (
-    <Suspense
+    <PageSheet>
+      <Suspense
       fallback={
         <>
           <HeaderSkeleton />
@@ -106,7 +119,8 @@ export default function CategoryPage(props: PageProps<"/categories/[slug]">) {
         </>
       }
     >
-      <CategoryView {...props} />
-    </Suspense>
+        <CategoryView {...props} />
+      </Suspense>
+    </PageSheet>
   );
 }

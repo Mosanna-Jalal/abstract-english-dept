@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Ornament } from "@/components/site/bits";
+import { TURN_BACK } from "@/lib/turn";
 
 export default function NotFound() {
   return (
@@ -9,10 +10,10 @@ export default function NotFound() {
       <h1 className="mt-6 font-serif text-3xl tracking-tight">This page isn’t in the archive</h1>
       <p className="mt-3 text-ink-2">It may have been moved, renamed, or never existed.</p>
       <div className="mt-8 flex gap-3">
-        <Link href="/" className="btn btn-primary">
+        <Link href="/" transitionTypes={TURN_BACK} className="btn btn-primary">
           Go home
         </Link>
-        <Link href="/abstracts" className="btn btn-secondary">
+        <Link href="/abstracts" transitionTypes={TURN_BACK} className="btn btn-secondary">
           Browse abstracts
         </Link>
       </div>

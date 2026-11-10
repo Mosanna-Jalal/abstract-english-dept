@@ -29,8 +29,8 @@ interface Line {
 const SEP = String.raw`\s*[:：\-–—]+\s*`;
 const EMAIL_RX = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i;
 const PHONE_RX = /(?:\+?91[\s-]?)?(?:0[\s-]?)?[6-9]\d{4}[\s-]?\d{5}\b/;
-const KEYWORDS_RX = /^(?:key\s*-?\s*words?|index\s+terms)\s*(?:[:：\-–—.]+\s*(.*)|$)/i;
-const INLINE_KEYWORDS_RX = /\s*\bkey\s*-?\s*words?\s*[:：\-–—]+\s*(.+)$/i;
+const KEYWORDS_RX = /^(?:key\s*-?\s*(?:words?|terms?)|index\s+terms)\s*(?:[:：\-–—.]+\s*(.*)|$)/i;
+const INLINE_KEYWORDS_RX = /\s*\bkey\s*-?\s*(?:words?|terms?)\s*[:：\-–—]+\s*(.+)$/i;
 const THEME_RX = new RegExp(
   String.raw`^(?:sub[\s-]*theme|theme|track|area\s+of\s+(?:the\s+)?paper|category)\s*(?:no\.?\s*\d+)?${SEP}(.+)$`,
   "i",
@@ -264,13 +264,24 @@ function splitKeywords(s: string): string[] {
   const out: string[] = [];
   for (const raw of s.split(/[,;•·|]|\s{2,}|\s[-–—]\s/)) {
     const k = raw.replace(/\s+/g, " ").replace(/^[\s\-–—*]+|[\s.]+$/g, "").replace(/^and\s+/i, "").trim();
-    if (!k || k.length > 60 || wordsIn(k) > 6) continue;
+    if (!k || k.length > 60 || wordsIn(k) > 6 || /^etc$/i.test(k)) continue;
     const key = k.toLowerCase();
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(k);
   }
   return out.slice(0, 12);
+}
+
+/**
+ * A body paragraph that isn't part of the abstract: a lone "-" left after a
+ * stripped "Abstract: -" heading, a stray "I", or a contact line such as
+ * "*Corresponding Author" or an email address, which must never go public.
+ */
+function isLeftover(p: string): boolean {
+  if ((p.match(/[\p{L}\p{N}]/gu)?.length ?? 0) < 2) return true;
+  if ((EMAIL_RX.test(p) || PHONE_RX.test(p)) && wordsIn(p) <= 12) return true;
+  return /^\*?\s*corresponding\s+author\b/i.test(p) && wordsIn(p) <= 6;
 }
 
 function buildParagraphs(lines: Line[]): string[] {
@@ -605,7 +616,7 @@ export function parseAbstract(raw: string, fileName = ""): ParsedAbstract {
       if (i !== abstractIdx && !consumed.has(i)) bodyLines.push(lines[i]);
     }
   }
-  let paragraphs = buildParagraphs(bodyLines);
+  let paragraphs = buildParagraphs(bodyLines).filter((p) => !isLeftover(p));
 
   // "... final sentence. Keywords: a, b, c" on the same line as the body.
   if (!keywords.length && paragraphs.length) {

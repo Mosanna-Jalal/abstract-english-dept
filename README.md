@@ -6,12 +6,15 @@ admin panel for importing and categorising submissions. Built with Next.js 16
 
 ## What's inside
 
-**Public site** (mobile-first, light and dark mode)
+**Public site** (mobile-first, light and dark mode). Moving between pages turns them like the pages of a book: forward as you go deeper, back as you return (in browsers that support view transitions; elsewhere pages change instantly), with the sound of a turning page. The sound is synthesised in the browser, so there are no audio files; readers can switch it off with the speaker button, and the choice is remembered. Each sub-theme has its own icon.
 
-- **Home**: event title, search, categories, latest abstracts
+- **Home**: event title, search, the collection as a bookshelf (one cloth-bound book per sub-theme, thicker the more abstracts it holds), latest abstracts
+- **Categories** (`/categories`): the whole bookshelf
 - **Browse** (`/abstracts`): live search across titles, authors, institutions, keywords and full text, with category filters
-- **Category pages** (`/categories/[slug]`) and **abstract pages** (`/abstracts/[no]`) with share links
-- **Book of Abstracts** (`/book`): every abstract arranged by category, with contents. Use *Print / Save PDF* for a printed or PDF copy
+- **Category pages** (`/categories/[slug]`): a sub-theme's abstracts, with search
+- **Abstract pages** (`/abstracts/[no]`): an abstract opens in its sub-theme's own book, bound in the sub-theme's colour: a title page facing the text on wide screens, one page at a time on phones. Turning the page moves to the next abstract in the sub-theme, and the address follows, so whatever is open can be shared, printed or reloaded
+- **Book of Abstracts** (`/book`): a flipbook with a cover, contents and one page per abstract, arranged by sub-theme. Two-page spreads on desktop and single pages on phones; turn pages by clicking, swiping or with the arrow keys. `/book?page=N` opens a given page
+- **Print edition** (`/book/print`): the same book as one long page. Use *Print / Save PDF* for a printed or PDF copy
 - **Guidelines** (`/guidelines`): taken from Settings
 
 An abstract appears publicly once it has a category and isn't hidden. Authors'
@@ -33,7 +36,7 @@ Requires Node.js 20.9 or newer.
 
 ```bash
 npm install
-npm run dev          # http://localhost:3000  (admin: /admin)
+npm run dev          # http://localhost:3001  (admin: /admin)
 ```
 
 Create `.env.local` in the project root. It is git-ignored, so never commit it.
@@ -90,6 +93,7 @@ app/admin/export     CSV export      app/admin/files/[id]  original files (admin
 proxy.ts             redirects signed-out visitors away from /admin
 lib/parse-abstract.ts  turns extracted text into title / authors / keywords / body
 lib/suggest.ts         explainable keyword-based category suggestions
+lib/page-sound.ts      page-turn sound (Web Audio) and its on/off setting
 lib/queries.ts         public cached reads   lib/admin-queries.ts  admin reads
 ```
 

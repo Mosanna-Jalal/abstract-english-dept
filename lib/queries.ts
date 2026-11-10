@@ -218,40 +218,37 @@ export async function getRecentAbstracts(limit = 6): Promise<AbstractCardDTO[]> 
   return docs.map((d) => toCard(d, map));
 }
 
-export interface AbstractPage {
-  abstract: AbstractDetailDTO;
-  prev: { serial: number; title: string } | null;
-  next: { serial: number; title: string } | null;
-  position: number;
-  ofTotal: number;
+/** An abstract's sub-theme as a book of its own: an abstract opens in it. */
+export interface Volume {
+  category: CategoryDTO;
+  /** Position of the category in the full list (its sub-theme number). */
+  number: number;
+  /** The sub-theme's public abstracts, by paper number. */
+  items: AbstractDetailDTO[];
+  /** Which of `items` was asked for. */
+  index: number;
 }
 
-export async function getAbstractPage(serial: number): Promise<AbstractPage | null> {
+export async function getVolume(serial: number): Promise<Volume | null> {
   "use cache";
   cacheLife("hours");
   cacheTag("abstracts", "categories");
   if (!Number.isInteger(serial) || serial < 1) return null;
   const { abstracts } = await collections();
-  const doc = await abstracts.findOne({ ...visible(), serial });
-  if (!doc || !doc.categoryId) return null;
+  const doc = await abstracts.findOne({ ...visible(), serial }, { projection: { categoryId: 1 } });
+  if (!doc?.categoryId) return null;
 
   const cats = await getCategories();
+  const at = cats.findIndex((c) => c.id === doc.categoryId?.toHexString());
+  if (at < 0) return null;
   const map = refMap(cats);
-  const sameCategory: Filter<AbstractDoc> = { ...visible(), categoryId: doc.categoryId };
-  const [prev, next, position, ofTotal] = await Promise.all([
-    abstracts.find({ ...sameCategory, serial: { $lt: serial } }, { projection: { serial: 1, title: 1 } }).sort({ serial: -1 }).limit(1).next(),
-    abstracts.find({ ...sameCategory, serial: { $gt: serial } }, { projection: { serial: 1, title: 1 } }).sort({ serial: 1 }).limit(1).next(),
-    abstracts.countDocuments({ ...sameCategory, serial: { $lte: serial } }),
-    abstracts.countDocuments(sameCategory),
-  ]);
-
-  return {
-    abstract: { ...toCard(doc, map), body: doc.body ?? "", createdAt: (doc.createdAt ?? new Date(0)).toISOString() },
-    prev: prev ? { serial: prev.serial, title: prev.title } : null,
-    next: next ? { serial: next.serial, title: next.title } : null,
-    position,
-    ofTotal,
-  };
+  const docs = await abstracts.find({ ...visible(), categoryId: doc.categoryId }).sort({ serial: 1 }).toArray();
+  const items = docs.map((d) => ({
+    ...toCard(d, map),
+    body: d.body ?? "",
+    createdAt: (d.createdAt ?? new Date(0)).toISOString(),
+  }));
+  return { category: cats[at], number: at + 1, items, index: items.findIndex((a) => a.serial === serial) };
 }
 
 export interface BookSection {

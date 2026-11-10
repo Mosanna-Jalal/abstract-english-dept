@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { ArrowLeft, EyeOff, FileText, Keyboard, Pencil, SkipForward, Sparkles, Undo2 } from "lucide-react";
 import { assignCategoryAction, bulkAction } from "@/app/admin/actions";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { toneStyle } from "@/lib/colors";
 import { cn, padSerial, toParagraphs } from "@/lib/text";
 import type { CategoryDTO, QueueItemDTO } from "@/lib/types";
@@ -281,7 +282,7 @@ export function CategorizeDeck({
                         : "border-line bg-surface hover:border-[var(--tone-line)] hover:bg-[var(--tone-bg)]",
                     )}
                   >
-                    <span className="dot" aria-hidden />
+                    <CategoryIcon category={c} className="size-4 flex-none text-[var(--tone-fg)]" strokeWidth={1.9} />
                     <span className="min-w-0 flex-1">{c.name}</span>
                     {i < 9 && (
                       <kbd className="hidden size-5 flex-none items-center justify-center rounded-md border border-line text-[0.68rem] text-ink-3 lg:flex">

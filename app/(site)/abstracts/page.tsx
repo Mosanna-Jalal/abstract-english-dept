@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { BookSearch } from "lucide-react";
 import { AbstractCard } from "@/components/site/abstract-card";
 import { CardGridSkeleton, EmptyState, PageIntro, Pagination } from "@/components/site/bits";
 import { CategoryFilter, CategoryFilterView } from "@/components/site/category-filter";
+import { PageSheet, TurnRegion } from "@/components/site/page-sheet";
 import { SearchField } from "@/components/site/search-field";
 import { getCategories, searchAbstracts } from "@/lib/queries";
 import { plural } from "@/lib/text";
@@ -58,7 +60,7 @@ async function Results({ searchParams }: { searchParams: PageProps<"/abstracts">
   }
 
   return (
-    <>
+    <TurnRegion key={result.page}>
       <p className="mb-5 text-sm text-ink-3" aria-live="polite">
         {plural(result.total, "abstract")}
         {result.category && (
@@ -80,14 +82,14 @@ async function Results({ searchParams }: { searchParams: PageProps<"/abstracts">
         ))}
       </div>
       <Pagination page={result.page} pages={result.pages} href={href} />
-    </>
+    </TurnRegion>
   );
 }
 
 export default function BrowsePage(props: PageProps<"/abstracts">) {
   return (
-    <>
-      <PageIntro eyebrow="The archive" title="Browse abstracts">
+    <PageSheet>
+      <PageIntro eyebrow="The archive" title="Browse abstracts" icon={<BookSearch />}>
         Search across titles, authors, institutions, keywords and the full text of every abstract.
       </PageIntro>
       <div className="glass sticky top-16 z-30 border-b border-line md:top-[4.5rem]">
@@ -105,6 +107,6 @@ export default function BrowsePage(props: PageProps<"/abstracts">) {
           <Results searchParams={props.searchParams} />
         </Suspense>
       </div>
-    </>
+    </PageSheet>
   );
 }

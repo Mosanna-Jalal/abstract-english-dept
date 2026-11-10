@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { toneStyle } from "@/lib/colors";
 import { cn } from "@/lib/text";
+import { TURN_BACK } from "@/lib/turn";
 import type { CategoryRef } from "@/lib/types";
 
 export function CategoryChip({
@@ -14,7 +16,7 @@ export function CategoryChip({
 }) {
   const content = (
     <>
-      <span className="dot" aria-hidden />
+      <CategoryIcon category={category} className="size-3.5 flex-none" strokeWidth={2} />
       {category.name}
     </>
   );
@@ -22,6 +24,7 @@ export function CategoryChip({
     return (
       <Link
         href={`/categories/${category.slug}`}
+        transitionTypes={TURN_BACK}
         className={cn("tone chip transition-opacity hover:opacity-80", className)}
         style={toneStyle(category.color)}
       >

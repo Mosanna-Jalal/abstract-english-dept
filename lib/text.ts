@@ -38,12 +38,15 @@ export function escapeRegex(input: string): string {
   return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/** Splits stored abstract text into paragraphs (blank-line separated). */
+/**
+ * Splits stored abstract text into paragraphs (blank-line separated). Drops
+ * leftovers from extraction that aren't prose, such as a lone "-".
+ */
 export function toParagraphs(body: string): string[] {
   return body
     .split(/\n\s*\n/)
     .map((p) => collapseWhitespace(p))
-    .filter(Boolean);
+    .filter((p) => (p.match(/[\p{L}\p{N}]/gu)?.length ?? 0) >= 2);
 }
 
 export function parseKeywords(input: string): string[] {

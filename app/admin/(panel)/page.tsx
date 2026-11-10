@@ -5,6 +5,7 @@ import { ArrowRight, CircleCheck, Download, FilePlus2, Inbox, Tags, Upload } fro
 import { AdminHeader, AdminSection } from "@/components/admin/ui";
 import { CategoryChip } from "@/components/site/category-chip";
 import { getDashboard } from "@/lib/admin-queries";
+import { CategoryIcon } from "@/components/ui/category-icon";
 import { toneStyle } from "@/lib/colors";
 import { formatDate, padSerial } from "@/lib/text";
 
@@ -145,7 +146,7 @@ async function Dashboard() {
                     >
                       <span className="flex items-center justify-between gap-3 text-[0.9rem]">
                         <span className="tone flex min-w-0 items-center gap-2" style={toneStyle(c.color)}>
-                          <span className="dot" aria-hidden />
+                          <CategoryIcon category={c} className="size-4 flex-none text-[var(--tone-fg)]" strokeWidth={1.9} />
                           <span className="truncate">{c.name}</span>
                         </span>
                         <span className="tabular flex-none font-medium">{c.count}</span>

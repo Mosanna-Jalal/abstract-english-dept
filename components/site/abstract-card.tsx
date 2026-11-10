@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { padSerial } from "@/lib/text";
+import { TURN_FORWARD } from "@/lib/turn";
 import type { AbstractCardDTO } from "@/lib/types";
 import { CategoryChip } from "./category-chip";
 
@@ -24,7 +25,11 @@ export function AbstractCard({
       </div>
 
       <h3 className="mt-4 font-serif text-[1.3rem] font-medium leading-snug tracking-tight text-ink sm:text-[1.4rem]">
-        <Link href={`/abstracts/${item.serial}`} className="outline-none after:absolute after:inset-0 after:rounded-[1.25rem]">
+        <Link
+          href={`/abstracts/${item.serial}`}
+          transitionTypes={TURN_FORWARD}
+          className="outline-none after:absolute after:inset-0 after:rounded-[1.25rem]"
+        >
           {item.title}
         </Link>
       </h3>
