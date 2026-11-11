@@ -937,7 +937,7 @@
 /* ---------------------------------------------------------------------------
    Bookshelf — the collection (components/site/bookshelf.tsx). Each sub-theme
    is a cloth-bound book standing face-out on a shelf, thicker the more
-   abstracts it holds (--n). Book sizes are in cqw, a hundredth of one book's
+   abstracts it holds (--t, 0–1). Book sizes are in cqw, a hundredth of one book's
    width, so a book keeps its proportions at every screen size.
    --------------------------------------------------------------------------- */
 :root {
@@ -1109,7 +1109,7 @@
 }
 
 .book {
-  --depth: calc((7 + var(--n, 1) * 1.1) * 1cqw);
+  --depth: calc((6 + var(--t, 0.3) * 14) * 1cqw);
   position: relative;
   display: block;
   aspect-ratio: 5 / 7;

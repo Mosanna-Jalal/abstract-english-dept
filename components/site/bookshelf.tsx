@@ -13,6 +13,10 @@ import type { CategoryDTO } from "@/lib/types";
  */
 export function Bookshelf({ categories, all }: { categories: CategoryDTO[]; all: CategoryDTO[] }) {
   const numbers = new Map(all.map((c, i) => [c.id, i + 1]));
+  // Thickness from 0 to 1, relative to the fullest sub-theme. The square root
+  // keeps small sub-themes from all looking equally thin.
+  const most = Math.max(1, ...categories.map((c) => c.count));
+  const thickness = (count: number) => Number(Math.sqrt(count / most).toFixed(3));
   return (
     <ul role="list" className="bookshelf">
       {categories.map((category, index) => {
@@ -21,7 +25,7 @@ export function Bookshelf({ categories, all }: { categories: CategoryDTO[]; all:
           <li
             key={category.id}
             className="shelf-slot"
-            style={{ ...toneStyle(category.color), "--n": Math.min(category.count, 12) } as React.CSSProperties}
+            style={{ ...toneStyle(category.color), "--t": thickness(category.count) } as React.CSSProperties}
           >
             <Link
               href={`/categories/${category.slug}`}
